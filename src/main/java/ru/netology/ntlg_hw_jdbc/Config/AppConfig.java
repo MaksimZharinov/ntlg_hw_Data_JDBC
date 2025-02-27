@@ -14,13 +14,10 @@ public class AppConfig {
 
     @Value("${app.script.select.name}")
     private String fileName;
-    private final NamedParameterJdbcTemplate jdbcTemplate =
-            new NamedParameterJdbcTemplate(new JdbcTemplate());
 
     @Bean
-    public SqlRepository sqlRepository() {
-        SqlRepository repository = new SqlRepository();
-        repository.setNamedParameterJdbcTemplate(jdbcTemplate);
+    public SqlRepository sqlRepository(DataSource dataSource) {
+        SqlRepository repository = new SqlRepository(dataSource);
         repository.setSelectProductNameScript(fileName);
         return repository;
     }

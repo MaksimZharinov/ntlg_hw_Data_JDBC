@@ -4,6 +4,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import javax.sql.DataSource;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,8 +15,12 @@ import java.util.stream.Collectors;
 @Repository
 public class SqlRepository {
 
-    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     private String selectProductNameScript;
+
+    public SqlRepository(DataSource dataSource) {
+        this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+    }
 
     private static String read(String scriptFileName) {
         try (InputStream is = new ClassPathResource(scriptFileName).getInputStream();
@@ -38,14 +43,10 @@ public class SqlRepository {
 
         return namedParameterJdbcTemplate.query(
                 selectProductNameScript,
-                new HashMap<String, Object>() {{
+                new HashMap<>() {{
                     put("name", name);
                 }},
                 (rs, rowNum) -> rs.getString("name")
         ).toString();
-    }
-
-    public void setNamedParameterJdbcTemplate(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
-        this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
 }

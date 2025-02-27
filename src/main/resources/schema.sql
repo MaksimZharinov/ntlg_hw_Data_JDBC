@@ -13,7 +13,7 @@ CREATE TABLE netology.orders
 (
     id           BIGSERIAL PRIMARY KEY,
     date         DATE DEFAULT CURRENT_DATE,
-    customer_id  INT REFERENCES CUSTOMERS (id),
+    customer_id  INT REFERENCES netology.customers (id),
     product_name TEXT NOT NULL,
     amount       DECIMAL(10, 2) CHECK (amount > 0)
 );
