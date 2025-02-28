@@ -1,5 +1,6 @@
 package ru.netology.ntlg_hw_jdbc.Repository;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -18,6 +19,7 @@ public class SqlRepository {
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     private String selectProductNameScript;
 
+    @Autowired
     public SqlRepository(DataSource dataSource) {
         this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
     }
