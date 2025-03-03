@@ -16,11 +16,13 @@ import java.util.stream.Collectors;
 @Repository
 public class SqlRepository {
 
+    private final DataSource dataSource;
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     private String selectProductNameScript;
 
     @Autowired
     public SqlRepository(DataSource dataSource) {
+        this.dataSource = dataSource;
         this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
     }
 
@@ -50,5 +52,9 @@ public class SqlRepository {
                 }},
                 (rs, rowNum) -> rs.getString("name")
         ).toString();
+    }
+
+    public DataSource getDataSource() {
+        return dataSource;
     }
 }
