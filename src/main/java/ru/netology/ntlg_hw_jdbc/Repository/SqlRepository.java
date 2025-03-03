@@ -48,9 +48,9 @@ public class SqlRepository {
         return namedParameterJdbcTemplate.query(
                 selectProductNameScript,
                 new HashMap<>() {{
-                    put("name", name);
+                    put("name", name.toLowerCase());
                 }},
-                (rs, rowNum) -> rs.getString("name")
+                (rs, rowNum) -> rs.getString("product_name")
         ).toString();
     }
 
