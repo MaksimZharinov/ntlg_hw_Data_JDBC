@@ -1,29 +1,31 @@
-package ru.netology.ntlg_hw_jdbc.Repository;
+package ru.netology.ntlg_hw_jdbc.repository;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import javax.sql.DataSource;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Repository
 public class SqlRepository {
 
-    private final DataSource dataSource;
+    @Value("${app.script.select.name}")
+    private String scriptFileName;
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-    private String selectProductNameScript;
+    private final String selectProductNameScript;
 
-    @Autowired
-    public SqlRepository(DataSource dataSource) {
-        this.dataSource = dataSource;
-        this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+    public SqlRepository(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+        this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
+        this.selectProductNameScript = read(scriptFileName);
+
     }
 
     private static String read(String scriptFileName) {
@@ -35,26 +37,18 @@ public class SqlRepository {
         }
     }
 
-    public void setSelectProductNameScript(String scriptFileName) {
-        this.selectProductNameScript = read(scriptFileName);
-    }
-
     public String getSelectProductNameScript() {
         return selectProductNameScript;
     }
 
-    public String getProductName(String name) {
+    public List<String> getProductName(String name) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("name", name.toLowerCase());
 
-        return namedParameterJdbcTemplate.query(
+        return namedParameterJdbcTemplate.queryForList(
                 selectProductNameScript,
-                new HashMap<>() {{
-                    put("name", name.toLowerCase());
-                }},
-                (rs, rowNum) -> rs.getString("product_name")
-        ).toString();
-    }
-
-    public DataSource getDataSource() {
-        return dataSource;
+                params,
+                String.class
+        );
     }
 }
