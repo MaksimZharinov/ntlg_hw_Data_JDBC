@@ -17,12 +17,11 @@ import java.util.stream.Collectors;
 @Repository
 public class SqlRepository {
 
-    @Value("${app.script.select.name}")
-    private String scriptFileName;
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     private final String selectProductNameScript;
 
-    public SqlRepository(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+    public SqlRepository(NamedParameterJdbcTemplate namedParameterJdbcTemplate,
+                         @Value("${app.script.select.name}") String scriptFileName) {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
         this.selectProductNameScript = read(scriptFileName);
 
